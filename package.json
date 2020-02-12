@@ -1,0 +1,29 @@
+{
+  "name": "cosmosdb-adapter",
+  "version": "0.1.0",
+  "description": "A Node.js adapter for Cosmos DB with functions commonly (re)implemented in Azure projects.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/drigofonte/cosmosdb-adapter.git"
+  },
+  "keywords": [
+    "cosmosdb",
+    "cosmos",
+    "db",
+    "azure",
+    "adapter"
+  ],
+  "author": "Rodrigo Fontenele Carvalho",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/drigofonte/cosmosdb-adapter/issues"
+  },
+  "homepage": "https://github.com/drigofonte/cosmosdb-adapter#readme",
+  "dependencies": {
+    "@azure/cosmos": "3.6.0"
+  }
+}
