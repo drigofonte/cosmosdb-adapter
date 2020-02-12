@@ -1,6 +1,6 @@
 const { CosmosClient, ItemResponse, FeedResponse, PermissionMode } = require('@azure/cosmos');
 
-module.exports.CosmosDb = class {
+module.exports.CosmosDbAdapter = class {
     /**
      * @param {string} uri 
      * @param {string} key 
