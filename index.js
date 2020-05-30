@@ -38,6 +38,21 @@ module.exports.CosmosDbAdapter = class {
             .replace(document);
     }
 
+    /**
+     * @param {string} databaseId 
+     * @param {string} containerId 
+     * @param {string} id 
+     * @param {string} partitionValue 
+     * @param {object} document 
+     * @returns Promise<ItemResponse<object>>
+     */
+    async delete(databaseId, containerId, id, partitionValue) {
+        return await this.client
+            .database(databaseId)
+            .container(containerId)
+            .item(id, partitionValue)
+            .delete();
+    }
 
     /**
      * @param {string} databaseId 
