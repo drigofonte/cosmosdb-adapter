@@ -1,6 +1,6 @@
 {
   "name": "cosmosdb-adapter",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "A Node.js adapter for Cosmos DB with functions commonly (re)implemented in Azure projects.",
   "main": "index.js",
   "scripts": {
