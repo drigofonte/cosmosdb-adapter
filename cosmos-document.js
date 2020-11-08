@@ -30,6 +30,9 @@ class CosmosDocument {
             const obj = { ...this };
             delete obj.partitionId;
             delete obj.container;
+            delete obj.key;
+            delete obj.url;
+            delete obj.db;
 
             if (this.id === undefined) {
                 await cosmosdb.write(this.db, this.container, obj);
