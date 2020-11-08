@@ -17,6 +17,13 @@ class CosmosDocument {
      */
     onBeforeWrite() { return true; }
 
+    /**
+     * To be overriden by extensions of this class.
+     * 
+     * @returns {Function}
+     */
+    assignFunc() { return () => {} }
+
     async write() {
         if (this.onBeforeWrite()) {
             const cosmosdb = new CosmosDbAdapter(this.url, this.key);
@@ -33,8 +40,8 @@ class CosmosDocument {
         return this;
     }
 
-    async getSingle(query, container, assignFunc) {
-        return await CosmosDocument.getSingle(query, container, assignFunc, url, key, db);
+    async getSingle(query) {
+        return await CosmosDocument.getSingle(query, this.container, this.assignFunc, this.url, this.key, this.db);
     }
 
     static async getSingle(query, container, assignFunc, url, key, db) {
