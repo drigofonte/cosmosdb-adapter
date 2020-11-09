@@ -47,6 +47,16 @@ class CosmosDocument {
         return await CosmosDocument.getSingle(query, this.container, this.assignFunc, this.url, this.key, this.db);
     }
 
+    toJSON() {
+        const obj = { ...this };
+        delete obj.partitionId;
+        delete obj.container;
+        delete obj.key;
+        delete obj.url;
+        delete obj.db;
+        return obj;
+    }
+
     static async getSingle(query, container, assignFunc, url, key, db) {
         const cosmosdb = new CosmosDbAdapter(url, key);
         const response = await cosmosdb.execute(db, container, query);
