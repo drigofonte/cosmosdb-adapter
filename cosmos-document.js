@@ -66,6 +66,12 @@ class CosmosDocument {
         }
         return obj;
     }
+
+    static async getAll(query, container, assignFunc, url, key, db) {
+      const cosmosdb = new CosmosDbAdapter(url, key);
+      const response = await cosmosdb.execute(db, container, query);
+      return response.resources.map(r => assignFunc(r));
+    }
 }
 
 module.exports.CosmosDocument = CosmosDocument;
