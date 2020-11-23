@@ -12,6 +12,22 @@ class CosmosDbAdapter {
     /**
      * @param {string} databaseId 
      * @param {string} containerId 
+     * @param {string} id 
+     * @param {string} partitionValue 
+     * @param {object} document 
+     * @returns {Promise<ItemResponse<object>>}
+     */
+    async read(databaseId, containerId, id, partitionValue) {
+      return await this.client
+          .database(databaseId)
+          .container(containerId)
+          .item(id, partitionValue)
+          .read();
+    }
+
+    /**
+     * @param {string} databaseId 
+     * @param {string} containerId 
      * @param {object} document 
      * @returns {Promise<ItemResponse<object>>}
      */

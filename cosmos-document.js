@@ -46,6 +46,15 @@ class CosmosDocument {
     return this;
   }
 
+  async load() {
+    const cosmosdb = new CosmosDbAdapter(this.url, this.key);
+    const result = await cosmosdb.read(this.db, this.container, this.id, this.partitionId);
+    const obj = this.assignFunc(result.resource);
+    for (const [ key, value ] of Object.entries(obj)) {
+      this[key] = value;
+    }
+  }
+
   /**
    * @param {String} query 
    */
