@@ -46,12 +46,24 @@ class CosmosDocument {
     return this;
   }
 
+  /**
+   * @returns {{ data: Object, status: Number }}
+   */
   async load() {
     const cosmosdb = new CosmosDbAdapter(this.url, this.key);
-    const result = await cosmosdb.read(this.db, this.container, this.id, this.partitionId);
-    const obj = this.assignFunc(result.resource);
-    for (const [ key, value ] of Object.entries(obj)) {
-      this[key] = value;
+    const { statusCode: status, resource } = await cosmosdb.read(this.db, this.container, this.id, this.partitionId);
+    if (status < 300) {
+      const obj = this.assignFunc(resource);
+      for (const [ key, value ] of Object.entries(obj)) {
+        this[key] = value;
+      }
+    } else {
+      switch (status) {
+        case 404:
+          throw new Error(`Could not find resource with partition/id: ${this.partitionId}/${this.id}`);
+        default:
+          throw new Error(`Could not load resource with partition/id: ${this.partitionId}/${this.id}`);
+      }
     }
     return this;
   }
