@@ -27,7 +27,10 @@ class CosmosDocument {
    */
   onBeforeWrite() { return true; }
 
-  async write() {
+  /**
+   * @param {Boolean} isNew force the document to be written to the database as a new document
+   */
+  async write(isNew = false) {
     if (this.onBeforeWrite()) {
       const cosmosdb = new CosmosDbAdapter(this.url, this.key);
       const obj = { ...this };
@@ -37,7 +40,7 @@ class CosmosDocument {
       delete obj.url;
       delete obj.db;
 
-      if (this.id === undefined) {
+      if (this.id === undefined || isNew) {
           await cosmosdb.write(this.db, this.container, obj);
       } else {
           await cosmosdb.replace(this.db, this.container, this.id, this.partitionId, obj);
