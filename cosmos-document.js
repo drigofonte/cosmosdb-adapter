@@ -48,6 +48,7 @@ class CosmosDocument {
 
   /**
    * @returns {{ data: Object, status: Number }}
+   * @throws {{ message: String, status: Number }}
    */
   async load() {
     const cosmosdb = new CosmosDbAdapter(this.url, this.key);
@@ -60,9 +61,9 @@ class CosmosDocument {
     } else {
       switch (status) {
         case 404:
-          throw new Error(`Could not find resource with partition/id: ${this.partitionId}/${this.id}`);
+          throw { message: `Could not find resource with partition/id: ${this.partitionId}/${this.id}`, status };
         default:
-          throw new Error(`Could not load resource with partition/id: ${this.partitionId}/${this.id}`);
+          throw { message: `Could not load resource with partition/id: ${this.partitionId}/${this.id}`, status };
       }
     }
     return this;
