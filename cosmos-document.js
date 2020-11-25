@@ -50,12 +50,17 @@ class CosmosDocument {
   }
 
   /**
-   * @returns {{ data: Object, status: Number }}
    * @throws {{ message: String, status: Number }}
    */
   async load() {
-    const cosmosdb = new CosmosDbAdapter(this.url, this.key);
-    const { statusCode: status, resource } = await cosmosdb.read(this.db, this.container, this.id, this.partitionId);
+    let resource;
+    let status = 404;
+    if (this.id && this.partitionId) {
+      ({ status, resource } = await this.loadByPointRead());
+    } else if (this.id) {
+      ({ status, resource } = await this.loadById());
+    }
+
     if (status < 300) {
       const obj = this.assignFunc(resource);
       for (const [ key, value ] of Object.entries(obj)) {
@@ -70,6 +75,25 @@ class CosmosDocument {
       }
     }
     return this;
+  }
+
+  /**
+   * @returns {{ status: String, resource: Object }}
+   */
+  async loadByPointRead() {
+    const cosmosdb = new CosmosDbAdapter(this.url, this.key);
+    const { statusCode: status, resource } = await cosmosdb.read(this.db, this.container, this.id, this.partitionId);
+    return { status, resource };
+  }
+
+  /**
+   * @returns {{ status: String, resource: Object }}
+   */
+  async loadById() {
+    const query = `SELECT * FROM c WHERE c.id = '${this.id}'`;
+    const cosmosdb = new CosmosDbAdapter(this.url, this.key);
+    const { statusCode: status, resources } = await cosmosdb.execute(this.db, this.container, query);
+    return { status, resource: resources[0] };
   }
 
   /**
