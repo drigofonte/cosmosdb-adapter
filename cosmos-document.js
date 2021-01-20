@@ -41,7 +41,8 @@ class CosmosDocument {
       delete obj.db;
 
       if (this.id === undefined || isNew) {
-          await cosmosdb.write(this.db, this.container, obj);
+          const res = await cosmosdb.write(this.db, this.container, obj);
+          this.id = res.resource.id;
       } else {
           await cosmosdb.replace(this.db, this.container, this.id, this.partitionId, obj);
       }
