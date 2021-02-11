@@ -1,4 +1,5 @@
 const { CosmosDbAdapter } = require('./cosmos-adapter');
+const { ItemResponse } = require('@azure/cosmos');
 
 class CosmosDocument {
   /**
@@ -28,6 +29,20 @@ class CosmosDocument {
   onBeforeWrite() { return true; }
 
   /**
+   * To be overriden by extensions of this class.
+   * 
+   * @param {ItemResponse<any>} response
+   */
+  async onCreated(response) { }
+
+  /**
+   * To be overriden by extensions of this class.
+   * 
+   * @param {ItemResponse<any>} response
+   */
+  async onUpdated(response) { }
+
+  /**
    * @param {Boolean} isNew force the document to be written to the database as a new document
    */
   async write(isNew = false) {
@@ -43,8 +58,10 @@ class CosmosDocument {
       if (this.id === undefined || isNew) {
           const res = await cosmosdb.write(this.db, this.container, obj);
           this.id = res.resource.id;
+          await this.onCreated(res);
       } else {
-          await cosmosdb.replace(this.db, this.container, this.id, this.partitionId, obj);
+          const res = await cosmosdb.replace(this.db, this.container, this.id, this.partitionId, obj);
+          await this.onUpdated(res);
       }
     }
     return this;
