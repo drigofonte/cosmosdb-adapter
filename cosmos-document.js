@@ -26,7 +26,7 @@ class CosmosDocument {
    * 
    * @returns {Boolean} true if the write should go ahead, false otherwise
    */
-  onBeforeWrite() { return true; }
+  async onBeforeWrite() { return true; }
 
   /**
    * To be overriden by extensions of this class.
@@ -46,7 +46,7 @@ class CosmosDocument {
    * @param {Boolean} isNew force the document to be written to the database as a new document
    */
   async write(isNew = false) {
-    if (this.onBeforeWrite()) {
+    if (await this.onBeforeWrite()) {
       const cosmosdb = new CosmosDbAdapter(this.url, this.key);
       const obj = { ...this };
       delete obj.partitionId;
