@@ -31,9 +31,23 @@ class CosmosDocument {
   /**
    * To be overriden by extensions of this class.
    * 
+   * @returns {Boolean} true if the document creation should go ahead, false otherwise
+   */
+  async onBeforeCreate() { return true; }
+
+  /**
+   * To be overriden by extensions of this class.
+   * 
    * @param {ItemResponse<any>} response
    */
   async onCreated(response) { }
+
+  /**
+   * To be overriden by extensions of this class.
+   * 
+   * @returns {Boolean} true if the document update should go ahead, false otherwise
+   */
+  async onBeforeUpdate() { return true; }
 
   /**
    * To be overriden by extensions of this class.
@@ -56,12 +70,18 @@ class CosmosDocument {
       delete obj.db;
 
       if (this.id === undefined || isNew) {
+        const cont = await this.onBeforeCreate();
+        if (cont) {
           const res = await cosmosdb.write(this.db, this.container, obj);
           this.id = res.resource.id;
           await this.onCreated(res);
+        }
       } else {
+        const cont = await this.onBeforeUpdate();
+        if (cont) {
           const res = await cosmosdb.replace(this.db, this.container, this.id, this.partitionId, obj);
           await this.onUpdated(res);
+        }
       }
     }
     return this;
