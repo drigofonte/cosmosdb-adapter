@@ -1,4 +1,4 @@
-const { CosmosDbAdapter } = require('./cosmos-adapter');
+const { CosmosDbAdapter: cosmosdb } = require('./cosmos-adapter-singleton');
 const { ItemResponse } = require('@azure/cosmos');
 
 class CosmosDocument {
@@ -11,7 +11,7 @@ class CosmosDocument {
    * @param {String} db 
    * @param {Function} assignFunc 
    */
-  constructor(id, partitionId, container, url, key, db, assignFunc) {
+  constructor(id, partitionId, container, db, assignFunc) {
     this.id = id;
     this.partitionId = partitionId;
     this.container = container;
@@ -61,7 +61,6 @@ class CosmosDocument {
    */
   async write(isNew = false) {
     if (await this.onBeforeWrite()) {
-      const cosmosdb = new CosmosDbAdapter(this.url, this.key);
       const obj = { ...this };
       delete obj.partitionId;
       delete obj.container;
@@ -119,7 +118,6 @@ class CosmosDocument {
    * @returns {{ status: String, resource: Object }}
    */
   async loadByPointRead() {
-    const cosmosdb = new CosmosDbAdapter(this.url, this.key);
     const { statusCode: status, resource } = await cosmosdb.read(this.db, this.container, this.id, this.partitionId);
     return { status, resource };
   }
@@ -129,7 +127,6 @@ class CosmosDocument {
    */
   async loadById() {
     const query = `SELECT * FROM c WHERE c.id = '${this.id}'`;
-    const cosmosdb = new CosmosDbAdapter(this.url, this.key);
     const { statusCode: status, resources } = await cosmosdb.execute(this.db, this.container, query);
     return { status, resource: resources[0] };
   }
@@ -138,14 +135,14 @@ class CosmosDocument {
    * @param {String} query 
    */
   async getSingle(query) {
-    return await CosmosDocument.getSingle(query, this.container, this.assignFunc, this.url, this.key, this.db);
+    return await CosmosDocument.getSingle(query, this.container, this.assignFunc, this.db);
   }
 
   /**
    * @param {String} query 
    */
   async getAll(query) {
-    return await CosmosDocument.getAll(query, this.container, this.assignFunc, this.url, this.key, this.db);
+    return await CosmosDocument.getAll(query, this.container, this.assignFunc, this.db);
   }
 
   toJSON() {
@@ -158,8 +155,7 @@ class CosmosDocument {
     return obj;
   }
 
-  static async getSingle(query, container, assignFunc, url, key, db) {
-    const cosmosdb = new CosmosDbAdapter(url, key);
+  static async getSingle(query, container, assignFunc, db) {
     const response = await cosmosdb.execute(db, container, query);
     let obj;
     if (response.resources.length > 0) {
@@ -168,8 +164,7 @@ class CosmosDocument {
     return obj;
   }
 
-  static async getAll(query, container, assignFunc, url, key, db) {
-    const cosmosdb = new CosmosDbAdapter(url, key);
+  static async getAll(query, container, assignFunc, db) {
     const response = await cosmosdb.execute(db, container, query);
     return response.resources.map(r => assignFunc(r));
   }
