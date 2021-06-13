@@ -6,7 +6,7 @@ class CosmosDbAdapter {
    * @param {string} key 
    * @param {{ enableEndpointDiscovery: Boolean }} options
    */
-  constructor(endpoint, key, options = { enableEndpointDiscorery = true }) {
+  constructor(endpoint, key, options = { enableEndpointDiscorery: true }) {
     this.client = new CosmosClient({
       endpoint, 
       key, 
