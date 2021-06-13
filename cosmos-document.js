@@ -6,8 +6,6 @@ class CosmosDocument {
    * @param {String} id 
    * @param {String} partitionId 
    * @param {String} container 
-   * @param {String} url 
-   * @param {String} key 
    * @param {String} db 
    * @param {Function} assignFunc 
    */
@@ -15,8 +13,6 @@ class CosmosDocument {
     this.id = id;
     this.partitionId = partitionId;
     this.container = container;
-    this.url = url;
-    this.key = key;
     this.db = db;
     this.assignFunc = assignFunc;
   }
