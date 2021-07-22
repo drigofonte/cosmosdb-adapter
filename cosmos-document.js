@@ -57,7 +57,7 @@ class CosmosDocument {
    */
   async write(isNew = false) {
     if (await this.onBeforeWrite()) {
-      const obj = { ...this };
+      const obj = JSON.parse(JSON.stringify(this));
       delete obj.partitionId;
       delete obj.container;
       delete obj.key;
